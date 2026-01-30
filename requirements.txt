@@ -1,0 +1,9 @@
+streamlit
+torch
+transformers
+datasets
+accelerate
+peft
+openpipe-art
+python-dotenv
+setproctitle
