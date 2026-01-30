@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTM1IiBoZWlnaHQ9IjMyIiB2aWV3Qm94PSIwIDAgMTM1IDMyIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0xMzUgMEgxMjEuMDJDMTIwLjYyIDAgMTIwIDEuMTg0IDEyMCAyLjIzNTdWMi4yMzU3QzEyMCAzLjI4NzMgMTIwLjYyIDQuNDcxNCAxMjEuMDIgNS4wMDAySDEzNVYwaFYwWk0xMzUgMzJIMTIxLjAyQzEyMC42MiAzMiAxMjAgMzAuODE2IDEyMCAyOS43NjQzVjI5Ljc2NDNDMTIwIDI4LjcxMTcgMTIwLjYyIDI3LjQ5NzIgMTIxLjAyIDI2Ljk5OThIMTM1VjMyWk0xMjEuMDIgNUgxMzVWNzUuNUgxMjEuMDJDMTE5LjUgNzUuNSAxMTguOTUgNzcuMDUwMiAxMTguOTUgNzguNzY0M1Y4NC4yMzU3QzExOC45NSA4NS45MTg4IDExOS41IDg3LjQ2OSAxMjEuMDIgODcuNUgxMzVWMzJIMTIxLjAyQzEyMy41IDMyIDEyNS4wNSA0MC41IDEyNS4wNSA0My4yMzU3VjQ4Ljc2NDNDMTI1LjA1IDUxLjUwMTMgMTIzLjUgNjAgMTIxLjAyIDYwSDEwMFYxMDBIMzVWMzJIMTIxLjAyWiIgZmlsbD0iIzY2RkY2NiIvPjwvc3ZnPg==" alt="License">
 </div>
 
-# <div align="center">**Text-to-SQL ** • **Chinook DB** • **Live Streamlit Demo**</div>
+# <div align="center"> • **Chinook DB** • **Streamlit Demo**</div>
 
 <div align="center">
   <img alt="Demo" src="./streamlit/demo.gif" width="800"/>
