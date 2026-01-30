@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="100" height="100" alt="Text2SQL" src="https://github.com/user-attachments/assets/d2387972-61ef-4b72-8cbf-e4073d8111cb" />
+  <img width="70" height="70" alt="Text2SQL" src="https://github.com/user-attachments/assets/d2387972-61ef-4b72-8cbf-e4073d8111cb" />
   <h1>Text2SQL-Chinook </h1>
   <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=yellow" alt="Python">
   <img src="https://img.shields.io/badge/Streamlit-1.28+-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit">
