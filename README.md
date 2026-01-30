@@ -19,7 +19,7 @@
 
 ```bash
 # 1. Clone & Install
-git clone https://github.com/yourusername/text2sql-chinook.git
+git clone https://github.com/DwaipayanDutta/Text2SQL-Chinook.git
 cd text2sql-chinook
 pip install -r requirements.txt
 
