@@ -27,11 +27,5 @@ pip install -r requirements.txt
 curl -L -o data/chinook.db "https://www.sqlitetutorial.net/wp-content/uploads/2018/03/chinook.zip" && \
 unzip -o data/chinook.zip -d data/ && mv data/Chinook_Sqlite.sqlite data/chinook.db
 
-# 3. Generate Training Data 
-python scripts/generate_data.py
-
-# 4. Train Model 
-python src/train.py
-
-# 5. Launch Demo ✨
+# 3. Launch Demo ✨
 streamlit run streamlit/app.py
