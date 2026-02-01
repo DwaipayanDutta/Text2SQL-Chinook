@@ -12,7 +12,7 @@ from langchain_classic.chains.sql_database.query import create_sql_query_chain
 from sqlalchemy import inspect
 from langchain_core.prompts import PromptTemplate
 
-MODEL_PATH = r"cycloneboy\SLM-SQL-0.6B"
+MODEL_PATH = r"SLM-SQL-0.6B"
 
 
 # --- STEP 1: GLOBAL DETERMINISM ---
@@ -88,7 +88,7 @@ def load_llm():
     model_id = MODEL_PATH
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     model = AutoModelForCausalLM.from_pretrained(
-        model_id, torch_dtype=torch.float16, device_map="auto"
+        model_id, dtype=torch.float16, device_map="auto"
     )
     pipe = pipeline(
         "text-generation",
