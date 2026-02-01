@@ -7,3 +7,7 @@ peft
 openpipe-art
 python-dotenv
 setproctitle
+langchain_huggingface
+langchain_community
+langchain_classic
+langchain_core
