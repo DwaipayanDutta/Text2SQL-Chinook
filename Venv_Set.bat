@@ -1,16 +1,4 @@
 @echo off
-
-if not exist ".venv" (
-    echo Creating virtual environment...
-    python -m venv .venv
-)
-call .venv\Scripts\activate
-pip install -r requirements.txt
-
-streamlit run app_streamlit2.py
-
-pause
-@echo off
 setlocal enabledelayedexpansion
 
 echo ================================
@@ -18,82 +6,82 @@ echo   Smart Streamlit Launcher
 echo ================================
 echo.
 
-REM ---- Config ----
+REM ---------- Config ----------
 set "VENV_DIR=.venv"
 set "REQ_FILE=requirements.txt"
 set "APP_FILE=app_streamlit2.py"
 set "STAMP_FILE=%VENV_DIR%\req_timestamp.txt"
 
-REM ---- Flags ----
-set "FORCE_INSTALL=0"
-if "%1"=="--reinstall" set "FORCE_INSTALL=1"
-
-REM ---- Check Python ----
-where python >nul 2>nul
-if errorlevel 1 (
-    echo [ERROR] Python not found in PATH.
-    pause
-    exit /b 1
+REM ---------- Detect Python ----------
+where py >nul 2>nul
+if %errorlevel%==0 (
+    set "PYTHON=py -3.12"
+) else (
+    where python >nul 2>nul
+    if errorlevel 1 (
+        echo [ERROR] Python not found in PATH.
+        pause
+        exit /b 1
+    )
+    set "PYTHON=python"
 )
 
-REM ---- Create venv if missing ----
+echo Using interpreter: %PYTHON%
+echo.
+
+REM ---------- Create venv ----------
 if not exist "%VENV_DIR%\Scripts\activate.bat" (
     echo Creating virtual environment...
-    python -m venv "%VENV_DIR%"
+    %PYTHON% -m venv "%VENV_DIR%"
+
     if errorlevel 1 (
-        echo [ERROR] Failed to create venv.
+        echo [ERROR] Failed to create virtual environment.
         pause
         exit /b 1
     )
 )
 
-REM ---- Activate venv ----
+REM ---------- Activate ----------
 call "%VENV_DIR%\Scripts\activate.bat"
 
-REM ---- Get current requirements timestamp ----
+REM ---------- Upgrade pip (VERY important for 3.12) ----------
+python -m pip install --upgrade pip setuptools wheel >nul
+
+REM ---------- Requirements timestamp ----------
+set CURR_TS=NONE
 if exist "%REQ_FILE%" (
     for %%A in ("%REQ_FILE%") do set CURR_TS=%%~tA
-) else (
-    set CURR_TS=NONE
 )
 
-REM ---- Read stored timestamp ----
 set OLD_TS=NONE
 if exist "%STAMP_FILE%" (
     set /p OLD_TS=<"%STAMP_FILE%"
 )
 
-REM ---- Decide install ----
-set NEED_INSTALL=0
-
-if %FORCE_INSTALL%==1 (
-    set NEED_INSTALL=1
-) else if not "%CURR_TS%"=="%OLD_TS%" (
-    set NEED_INSTALL=1
-)
-
-REM ---- Install if needed ----
-if %NEED_INSTALL%==1 (
+REM ---------- Install dependencies if changed ----------
+if not "%CURR_TS%"=="%OLD_TS%" (
     if exist "%REQ_FILE%" (
-        echo Installing/updating dependencies...
-        pip install -r "%REQ_FILE%"
+        echo Installing dependencies...
+        python -m pip install -r "%REQ_FILE%"
+
         if errorlevel 1 (
-            echo [ERROR] Dependency install failed.
+            echo [ERROR] Dependency installation failed.
             pause
             exit /b 1
         )
+
         echo %CURR_TS% > "%STAMP_FILE%"
     ) else (
         echo [WARNING] requirements.txt not found — skipping install.
     )
 ) else (
-    echo Dependencies unchanged — fast start enabled.
+    echo Dependencies unchanged — fast startup enabled.
 )
 
-REM ---- Run app ----
+REM ---------- Launch Streamlit ----------
 echo.
 echo Starting Streamlit...
-streamlit run "%APP_FILE%"
+python -m streamlit run "%APP_FILE%"
 
 echo.
 pause
