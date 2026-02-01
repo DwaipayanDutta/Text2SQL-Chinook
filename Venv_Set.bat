@@ -7,7 +7,7 @@ if not exist ".venv" (
 call .venv\Scripts\activate
 pip install -r requirements.txt
 
-streamlit run app.py
+streamlit run app_streamlit2.py
 
 pause
 @echo off
@@ -21,7 +21,7 @@ echo.
 REM ---- Config ----
 set "VENV_DIR=.venv"
 set "REQ_FILE=requirements.txt"
-set "APP_FILE=app.py"
+set "APP_FILE=app_streamlit2.py"
 set "STAMP_FILE=%VENV_DIR%\req_timestamp.txt"
 
 REM ---- Flags ----

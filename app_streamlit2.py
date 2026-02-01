@@ -12,21 +12,24 @@ from langchain_classic.chains.sql_database.query import create_sql_query_chain
 from sqlalchemy import inspect
 from langchain_core.prompts import PromptTemplate
 
-MODEL_PATH = r'D:\Projects\git_workspace\Text2SQL-Chinook\cycloneboy\SLM-SQL-0.6B'
+MODEL_PATH = r"cycloneboy\SLM-SQL-0.6B"
+
 
 # --- STEP 1: GLOBAL DETERMINISM ---
 def set_seed(seed=42):
     random.seed(seed)
-    os.environ['PYTHONHASHSEED'] = str(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
+
 set_seed(999)
 
 st.set_page_config(page_title="SQL Generator", page_icon="🔍", layout="wide")
+
 
 # --- 2. Reliable Mermaid Renderer ---
 def render_mermaid(code: str):
@@ -42,6 +45,7 @@ def render_mermaid(code: str):
     """
     components.html(html_code, height=600, scrolling=True)
 
+
 def generate_mermaid_er(db_engine):
     inspector = inspect(db_engine)
     tables = inspector.get_table_names()
@@ -49,20 +53,21 @@ def generate_mermaid_er(db_engine):
     for table in tables:
         mermaid_code += f"    {table} {{\n"
         for col in inspector.get_columns(table):
-            col_name = col['name']
-            col_type = str(col['type']).split('(')[0]
+            col_name = col["name"]
+            col_type = str(col["type"]).split("(")[0]
             mermaid_code += f"        {col_type} {col_name}\n"
         mermaid_code += "    }\n"
         for fk in inspector.get_foreign_keys(table):
-            target_table = fk['referred_table']
-            mermaid_code += f"    {table} ||--o{{ {target_table} : \"\"\n"
+            target_table = fk["referred_table"]
+            mermaid_code += f'    {table} ||--o{{ {target_table} : ""\n'
     return mermaid_code
+
 
 # --- 3. Sidebar & DB Connection ---
 with st.sidebar:
     st.header("Database Config")
     db_uri = st.text_input("Database URI", value="sqlite:///chinook_sqlite.sqlite")
-    
+
     db = None
     if db_uri:
         try:
@@ -75,6 +80,7 @@ with st.sidebar:
         except Exception as e:
             st.error(f"Error: {e}")
 
+
 # --- 4. Model Loading ---
 @st.cache_resource
 def load_llm():
@@ -84,11 +90,18 @@ def load_llm():
     model = AutoModelForCausalLM.from_pretrained(
         model_id, torch_dtype=torch.float16, device_map="auto"
     )
-    pipe = pipeline("text-generation", model=model, tokenizer=tokenizer, 
-                    max_new_tokens=512, do_sample=False)
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=512,
+        do_sample=False,
+    )
     return HuggingFacePipeline(pipeline=pipe)
 
+
 llm = load_llm()
+
 
 # --- 5. Pure SQL Extraction ---
 def extract_sql(text: str) -> str:
@@ -101,9 +114,11 @@ def extract_sql(text: str) -> str:
     text = text.split(";")[0].strip()
     return text + ";" if text else ""
 
+
 def is_safe(sql: str) -> bool:
     forbidden = ["DROP", "DELETE", "UPDATE", "ALTER", "INSERT", "TRUNCATE"]
     return not any(re.search(rf"\b{word}\b", sql, re.IGNORECASE) for word in forbidden)
+
 
 # --- 6. Main UI ---
 st.title("SQL Query Generator")
@@ -113,11 +128,11 @@ if prompt := st.chat_input("Enter your request..."):
         st.error("Please connect a database in the sidebar.")
     else:
         st.chat_message("user").write(prompt)
-        
+
         with st.chat_message("assistant"):
             custom_prompt = PromptTemplate(
-            input_variables=["input", "table_info", "top_k"], 
-            template="""You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
+                input_variables=["input", "table_info", "top_k"],
+                template="""You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
 
             ### JOIN RULES:
             1. Many relationships require bridge tables. For example, to get Artist details for a Track, you MUST join Track -> Album -> Artist.
@@ -135,13 +150,13 @@ if prompt := st.chat_input("Enter your request..."):
             ### QUESTION: 
             {input}
 
-            SQLQuery:"""
+            SQLQuery:""",
             )
             chain = create_sql_query_chain(llm, db, prompt=custom_prompt)
             raw_response = chain.invoke({"question": prompt})
-            
+
             clean_sql = extract_sql(raw_response)
-            
+
             if clean_sql and is_safe(clean_sql):
                 # Strictly output only the code block
                 st.code(clean_sql, language="sql")
