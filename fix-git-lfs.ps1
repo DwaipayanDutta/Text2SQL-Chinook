@@ -1,4 +1,4 @@
-Write-Host "🔧 Initializing Git LFS."
+Write-Host "Initializing Git LFS."
 git lfs install
 
 Write-Host "Increasing Git HTTP buffer and disabling compression."
