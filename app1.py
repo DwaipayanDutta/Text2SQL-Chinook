@@ -15,7 +15,10 @@ from langchain_classic.chains.sql_database.query import create_sql_query_chain
 from sqlalchemy import inspect, text
 from langchain_core.prompts import PromptTemplate
 
+
+# =====================================================
 # GLOBAL STABILITY
+# =====================================================
 
 
 def set_seed(seed=42):
@@ -30,7 +33,10 @@ set_seed(999)
 torch.set_num_threads(1)
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
+
+# =====================================================
 # PATHS
+# =====================================================
 
 LOG_PATH = Path("chinook_sql_log.json")
 FAIL_PATH = Path("chinook_failures.json")
@@ -40,10 +46,14 @@ for path in [LOG_PATH, FAIL_PATH]:
         with open(path, "w") as f:
             json.dump([], f)
 
-
 MODEL_PATH = "cycloneboy/SLM-SQL-0.6B"
 
 st.set_page_config(page_title="Chinook SQL Generator + Evaluator", layout="wide")
+
+
+# =====================================================
+# MERMAID ER DIAGRAM
+# =====================================================
 
 
 def render_mermaid(code: str):
@@ -102,8 +112,9 @@ def load_llm():
         "text-generation",
         model=model,
         tokenizer=tokenizer,
-        max_new_tokens=1000,
+        max_new_tokens=600,
         do_sample=False,
+        temperature=0.0,
         pad_token_id=tokenizer.eos_token_id,
     )
 
@@ -112,6 +123,7 @@ def load_llm():
 
 llm = load_llm()
 
+
 # =====================================================
 # HELPERS
 # =====================================================
@@ -119,18 +131,26 @@ llm = load_llm()
 
 def extract_sql(text: str):
 
+    if isinstance(text, dict):
+        text = text.get("result", "")
+
     text = re.sub(r"```sql|```", "", text, flags=re.IGNORECASE)
 
     if "SQLQuery:" in text:
         text = text.split("SQLQuery:")[-1]
 
-    # Support WITH ... SELECT and queries without a trailing semicolon.
-    match = re.search(r"((WITH\b.*?SELECT\b.*)|SELECT\b.*)", text, re.IGNORECASE | re.DOTALL)
+    match = re.search(
+        r"((WITH\b.*?SELECT\b.*)|SELECT\b.*)",
+        text,
+        re.IGNORECASE | re.DOTALL,
+    )
+
     if match:
         candidate = match.group(1).strip()
-        # Trim to the last semicolon if extra text follows.
+
         if ";" in candidate:
             candidate = candidate[: candidate.rfind(";") + 1]
+
         return candidate.strip()
 
     return text.strip()
@@ -166,18 +186,20 @@ def execute_sql(db, sql):
 
 def _append_json_entry(path: Path, entry: dict):
     try:
-        import fcntl  # Unix-only file lock
+        import fcntl
     except Exception:
         fcntl = None
 
     with open(path, "r+") as f:
         if fcntl:
             fcntl.flock(f, fcntl.LOCK_EX)
+
         data = json.load(f)
         data.append(entry)
         f.seek(0)
         f.truncate()
         json.dump(data, f, indent=2)
+
         if fcntl:
             fcntl.flock(f, fcntl.LOCK_UN)
 
@@ -252,7 +274,7 @@ if st.sidebar.button("Replay Evaluation") and db:
 # MAIN
 # =====================================================
 
-st.title(" Chinook SQL Generator + Evaluator")
+st.title("Chinook SQL Generator + Evaluator")
 
 if prompt := st.chat_input("Ask a question about the Chinook database..."):
 
@@ -264,9 +286,8 @@ if prompt := st.chat_input("Ask a question about the Chinook database..."):
 
     with st.chat_message("assistant"):
 
-        custom_prompt = PromptTemplate(
-            input_variables=["question", "table_info", "top_k"],
-            template="""You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
+        custom_prompt = PromptTemplate.from_template(
+            """You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
 
 You MUST only use the tables and columns provided below.
 
@@ -276,10 +297,9 @@ DATABASE SCHEMA:
 =====================
 
 JOIN RULES:
-1. Many relationships require bridge tables. For example, to get Artist details for a Track, you MUST join Track -> Album -> Artist.
-2. Carefully trace the Foreign Keys (FK) in the Table Info below to connect tables.
-3. If a column isn't in Table A, check Table B's schema for a relationship.
-
+1. Many relationships require bridge tables.
+2. Carefully trace Foreign Keys to connect tables.
+3. Never guess column names.
 
 RULES:
 - Return ONLY SQL.
@@ -288,15 +308,15 @@ RULES:
 - Default LIMIT is {top_k} unless specified.
 
 QUESTION:
-{question}
+{input}
 
 SQLQuery:
-""",
+"""
         )
 
         chain = create_sql_query_chain(llm, db, prompt=custom_prompt)
 
-        raw_response = chain.invoke({"question": prompt})
+        raw_response = chain.invoke({"input": prompt})
 
         clean_sql = extract_sql(raw_response)
 
