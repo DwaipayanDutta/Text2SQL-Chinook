@@ -188,45 +188,26 @@ chain = SQL_PROMPT | llm | parser
 # =====================================================
 
 
-# def extract_sql(text):
-
-#     if not text:
-#         return ""
-
-#     text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-
-#     matches = list(
-#         re.finditer(
-#             r"(WITH\b.*?SELECT\b.*?;|SELECT\b.*?;)",
-#             text,
-#             re.IGNORECASE | re.DOTALL,
-#         )
-#     )
-
-#     if matches:
-#         return matches[-1].group(0).strip()
-
-#     return ""
-
-
 def extract_sql(text):
     if not text:
         return ""
 
-    # Remove code blocks
+    # Remove markdown blocks
     text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
 
-    # Look for WITH or SELECT — semicolon optional
-    match = re.search(
-        r"(WITH\b[\s\S]*?SELECT\b[\s\S]*?$|SELECT\b[\s\S]*?$)",
+    # Remove XML-style tags like <answer>
+    text = re.sub(r"<.*?>", "", text, flags=re.DOTALL)
+
+    # Grab the LAST real SQL statement
+    matches = re.findall(
+        r"(WITH\s+.*?SELECT\s+.*?FROM\s+.*?(?:;|$)|SELECT\s+.*?FROM\s+.*?(?:;|$))",
         text,
-        re.IGNORECASE,
+        re.IGNORECASE | re.DOTALL,
     )
 
-    if match:
-        sql = match.group(0).strip()
+    if matches:
+        sql = matches[-1].strip()
 
-        # Auto-add semicolon for SQLite
         if not sql.endswith(";"):
             sql += ";"
 
