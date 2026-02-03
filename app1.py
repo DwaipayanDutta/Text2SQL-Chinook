@@ -12,7 +12,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_huggingface import HuggingFacePipeline
 from langchain_community.utilities import SQLDatabase
 from langchain_classic.chains.sql_database.query import create_sql_query_chain
-from sqlalchemy import inspect
+from sqlalchemy import inspect, text
 from langchain_core.prompts import PromptTemplate
 
 # GLOBAL STABILITY
@@ -124,10 +124,14 @@ def extract_sql(text: str):
     if "SQLQuery:" in text:
         text = text.split("SQLQuery:")[-1]
 
-    match = re.search(r"(SELECT .*?;)", text, re.IGNORECASE | re.DOTALL)
-
+    # Support WITH ... SELECT and queries without a trailing semicolon.
+    match = re.search(r"((WITH\b.*?SELECT\b.*)|SELECT\b.*)", text, re.IGNORECASE | re.DOTALL)
     if match:
-        return match.group(1).strip()
+        candidate = match.group(1).strip()
+        # Trim to the last semicolon if extra text follows.
+        if ";" in candidate:
+            candidate = candidate[: candidate.rfind(";") + 1]
+        return candidate.strip()
 
     return text.strip()
 
@@ -152,42 +156,46 @@ def is_safe(sql: str):
 
 def execute_sql(db, sql):
     try:
-        result = db.run(sql)
-
-        if isinstance(result, str):
-            rows = result.count("\n")
-        else:
-            rows = len(result)
-
+        with db._engine.connect() as conn:
+            result = conn.execute(text(sql))
+            rows = len(result.fetchall()) if result.returns_rows else result.rowcount
         return True, rows, None
     except Exception as e:
         return False, 0, str(e)
 
 
+def _append_json_entry(path: Path, entry: dict):
+    try:
+        import fcntl  # Unix-only file lock
+    except Exception:
+        fcntl = None
+
+    with open(path, "r+") as f:
+        if fcntl:
+            fcntl.flock(f, fcntl.LOCK_EX)
+        data = json.load(f)
+        data.append(entry)
+        f.seek(0)
+        f.truncate()
+        json.dump(data, f, indent=2)
+        if fcntl:
+            fcntl.flock(f, fcntl.LOCK_UN)
+
+
 def log_query(question, sql, success, rows, error):
 
-    with open(LOG_PATH, "r+") as f:
-        data = json.load(f)
+    entry = {
+        "question": question,
+        "generated_sql": sql,
+        "execution_success": success,
+        "row_count": rows,
+        "error": error,
+    }
 
-        entry = {
-            "question": question,
-            "generated_sql": sql,
-            "execution_success": success,
-            "row_count": rows,
-            "error": error,
-        }
-
-        data.append(entry)
-
-        f.seek(0)
-        json.dump(data, f, indent=2)
+    _append_json_entry(LOG_PATH, entry)
 
     if not success:
-        with open(FAIL_PATH, "r+") as f:
-            fails = json.load(f)
-            fails.append(entry)
-            f.seek(0)
-            json.dump(fails, f, indent=2)
+        _append_json_entry(FAIL_PATH, entry)
 
 
 # =====================================================
@@ -198,7 +206,7 @@ with st.sidebar:
 
     st.header("Database")
 
-    db_uri = st.text_input("Chinook DB URI", value="sqlite:///chinook_sqlite.sqlite")
+    db_uri = st.text_input("Chinook DB URI", value="sqlite:///Chinook_Sqlite.sqlite")
 
     db = None
 
@@ -257,7 +265,7 @@ if prompt := st.chat_input("Ask a question about the Chinook database..."):
     with st.chat_message("assistant"):
 
         custom_prompt = PromptTemplate(
-            input_variables=["input", "table_info", "top_k"],
+            input_variables=["question", "table_info", "top_k"],
             template="""You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
 
 You MUST only use the tables and columns provided below.
@@ -280,7 +288,7 @@ RULES:
 - Default LIMIT is {top_k} unless specified.
 
 QUESTION:
-{input}
+{question}
 
 SQLQuery:
 """,
