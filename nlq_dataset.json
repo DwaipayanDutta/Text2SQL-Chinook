@@ -1,0 +1,6 @@
+[
+    {
+        "natural_query": "List the top 5 customers by total spending",
+        "sql_query": "SELECT c.CustomerId, SUM(i.Total) AS total_spent FROM Customer c JOIN Invoice i ON c.CustomerId = i.CustomerId GROUP BY c.CustomerId ORDER BY total_spent DESC LIMIT 5;"
+    }
+]

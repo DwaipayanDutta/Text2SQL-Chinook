@@ -1,0 +1,1752 @@
+[
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from USA.",
+    "output": "SELECT * FROM Customer WHERE Country = 'USA';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from Canada.",
+    "output": "SELECT * FROM Customer WHERE Country = 'Canada';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from Brazil.",
+    "output": "SELECT * FROM Customer WHERE Country = 'Brazil';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from France.",
+    "output": "SELECT * FROM Customer WHERE Country = 'France';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from Germany.",
+    "output": "SELECT * FROM Customer WHERE Country = 'Germany';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from UK.",
+    "output": "SELECT * FROM Customer WHERE Country = 'UK';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find all customers from Portugal.",
+    "output": "SELECT * FROM Customer WHERE Country = 'Portugal';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in New York.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'New York';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in Toronto.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'Toronto';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in Paris.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'Paris';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in Berlin.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'Berlin';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in Rio.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'Rio';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in London.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'London';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List invoices billed in Lisbon.",
+    "output": "SELECT * FROM Invoice WHERE BillingCity = 'Lisbon';"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Show the top 5 invoices by total amount.",
+    "output": "SELECT *\nFROM Invoice\nORDER BY Total DESC\nLIMIT 5;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Show the top 10 invoices by total amount.",
+    "output": "SELECT *\nFROM Invoice\nORDER BY Total DESC\nLIMIT 10;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Show the top 20 invoices by total amount.",
+    "output": "SELECT *\nFROM Invoice\nORDER BY Total DESC\nLIMIT 20;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List customers and their invoice totals.",
+    "output": "SELECT c.CustomerId, c.FirstName, c.LastName, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find the total sales per customer country.",
+    "output": "SELECT c.Country, SUM(i.Total) AS TotalSales\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.Country\nORDER BY TotalSales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "List tracks with their album and artist names.",
+    "output": "SELECT t.Name AS Track, al.Title AS Album, ar.Name AS Artist\nFROM Track t\nJOIN Album al ON t.AlbumId = al.AlbumId\nJOIN Artist ar ON al.ArtistId = ar.ArtistId;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Count tracks per genre.",
+    "output": "SELECT g.Name, COUNT(*) AS TrackCount\nFROM Track t\nJOIN Genre g ON t.GenreId = g.GenreId\nGROUP BY g.GenreId;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find customers who spent more than the average customer spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS Spending\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nHAVING Spending > (\n    SELECT AVG(customer_total)\n    FROM (\n        SELECT SUM(Total) AS customer_total\n        FROM Invoice\n        GROUP BY CustomerId\n    )\n);"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Rank customers by spending within each country.",
+    "output": "SELECT *\nFROM (\n    SELECT c.CustomerId,\n           c.Country,\n           SUM(i.Total) AS Spending,\n           RANK() OVER (PARTITION BY c.Country ORDER BY SUM(i.Total) DESC) AS rank\n    FROM Customer c\n    JOIN Invoice i ON c.CustomerId = i.CustomerId\n    GROUP BY c.CustomerId\n);"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Find artists with more albums than the average artist.",
+    "output": "SELECT ar.Name, COUNT(al.AlbumId) AS AlbumCount\nFROM Artist ar\nJOIN Album al ON ar.ArtistId = al.ArtistId\nGROUP BY ar.ArtistId\nHAVING AlbumCount > (\n    SELECT AVG(album_count)\n    FROM (\n        SELECT COUNT(*) AS album_count\n        FROM Album\n        GROUP BY ArtistId\n    )\n);"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Show the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Show the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Calculate the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Calculate the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Give me the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Give me the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Display the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Display the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "What is the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "What is the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Retrieve the total sales per billing country.",
+    "output": "SELECT BillingCountry, SUM(Total) AS Sales\nFROM Invoice\nGROUP BY BillingCountry\nORDER BY Sales DESC;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Retrieve the average invoice total.",
+    "output": "SELECT AVG(Total) AS AverageInvoice\nFROM Invoice;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 25 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 25;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 3 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 3;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 15 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 15;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  },
+  {
+    "instruction": "Generate a SQLite query for the Chinook database.",
+    "input": "Return the top 7 customers by spending.",
+    "output": "SELECT c.CustomerId, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId\nORDER BY TotalSpent DESC\nLIMIT 7;"
+  }
+]

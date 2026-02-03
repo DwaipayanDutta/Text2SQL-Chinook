@@ -1,0 +1,9 @@
+[
+  {
+    "question": " Write a query that determines the customer that has spent the most on music for each country. Write a query that returns the country along with the top customer and how much they spent. For countries where the top amount spent is shared, provide all customers who spent this amount. You should only need to use the Customer and Invoice tables.",
+    "generated_sql": "SELECT \n    i.Country, \n    c.FirstName, \n    c.LastName, \n    SUM(i.Total) AS TotalSpent\nFROM \n    \"Customer\" c\nJOIN \n    \"Invoice\" i ON c.\"CustomerId\" = i.\"CustomerId",
+    "execution_success": false,
+    "row_count": 0,
+    "error": "(sqlite3.OperationalError) unrecognized token: \"\"CustomerId\"\n[SQL: SELECT \n    i.Country, \n    c.FirstName, \n    c.LastName, \n    SUM(i.Total) AS TotalSpent\nFROM \n    \"Customer\" c\nJOIN \n    \"Invoice\" i ON c.\"CustomerId\" = i.\"CustomerId]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)"
+  }
+]

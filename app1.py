@@ -1,0 +1,312 @@
+import os
+import json
+import random
+import numpy as np
+import torch
+import re
+import streamlit as st
+import streamlit.components.v1 as components
+
+from pathlib import Path
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+from langchain_huggingface import HuggingFacePipeline
+from langchain_community.utilities import SQLDatabase
+from langchain_classic.chains.sql_database.query import create_sql_query_chain
+from sqlalchemy import inspect
+from langchain_core.prompts import PromptTemplate
+
+# GLOBAL STABILITY
+
+
+def set_seed(seed=42):
+    random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+
+
+set_seed(999)
+
+torch.set_num_threads(1)
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+# PATHS
+
+LOG_PATH = Path("chinook_sql_log.json")
+FAIL_PATH = Path("chinook_failures.json")
+
+for path in [LOG_PATH, FAIL_PATH]:
+    if not path.exists():
+        with open(path, "w") as f:
+            json.dump([], f)
+
+
+MODEL_PATH = "cycloneboy/SLM-SQL-0.6B"
+
+st.set_page_config(page_title="Chinook SQL Generator + Evaluator", layout="wide")
+
+
+def render_mermaid(code: str):
+    html_code = f"""
+    <pre class="mermaid">
+        {code}
+    </pre>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({{ startOnLoad: true }});
+    </script>
+    """
+    components.html(html_code, height=600, scrolling=True)
+
+
+def generate_mermaid_er(db_engine):
+    inspector = inspect(db_engine)
+    tables = inspector.get_table_names()
+    mermaid_code = "erDiagram\n"
+
+    for table in tables:
+        mermaid_code += f"{table} {{\n"
+
+        for col in inspector.get_columns(table):
+            col_type = str(col["type"]).split("(")[0]
+            mermaid_code += f"{col_type} {col['name']}\n"
+
+        mermaid_code += "}\n"
+
+        for fk in inspector.get_foreign_keys(table):
+            target = fk["referred_table"]
+            mermaid_code += f'{table} ||--o{{ {target} : ""\n'
+
+    return mermaid_code
+
+
+# =====================================================
+# MODEL
+# =====================================================
+
+
+@st.cache_resource
+def load_llm():
+
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_PATH,
+        dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+        device_map="auto",
+        trust_remote_code=True,
+        attn_implementation="sdpa",
+    )
+
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=1000,
+        do_sample=False,
+        pad_token_id=tokenizer.eos_token_id,
+    )
+
+    return HuggingFacePipeline(pipeline=pipe)
+
+
+llm = load_llm()
+
+# =====================================================
+# HELPERS
+# =====================================================
+
+
+def extract_sql(text: str):
+
+    text = re.sub(r"```sql|```", "", text, flags=re.IGNORECASE)
+
+    if "SQLQuery:" in text:
+        text = text.split("SQLQuery:")[-1]
+
+    match = re.search(r"(SELECT .*?;)", text, re.IGNORECASE | re.DOTALL)
+
+    if match:
+        return match.group(1).strip()
+
+    return text.strip()
+
+
+def is_safe(sql: str):
+
+    forbidden = [
+        "DROP",
+        "DELETE",
+        "UPDATE",
+        "ALTER",
+        "INSERT",
+        "TRUNCATE",
+        "CREATE",
+        "REPLACE",
+        "ATTACH",
+        "PRAGMA",
+    ]
+
+    return not any(re.search(rf"\b{word}\b", sql, re.IGNORECASE) for word in forbidden)
+
+
+def execute_sql(db, sql):
+    try:
+        result = db.run(sql)
+
+        if isinstance(result, str):
+            rows = result.count("\n")
+        else:
+            rows = len(result)
+
+        return True, rows, None
+    except Exception as e:
+        return False, 0, str(e)
+
+
+def log_query(question, sql, success, rows, error):
+
+    with open(LOG_PATH, "r+") as f:
+        data = json.load(f)
+
+        entry = {
+            "question": question,
+            "generated_sql": sql,
+            "execution_success": success,
+            "row_count": rows,
+            "error": error,
+        }
+
+        data.append(entry)
+
+        f.seek(0)
+        json.dump(data, f, indent=2)
+
+    if not success:
+        with open(FAIL_PATH, "r+") as f:
+            fails = json.load(f)
+            fails.append(entry)
+            f.seek(0)
+            json.dump(fails, f, indent=2)
+
+
+# =====================================================
+# SIDEBAR — DB
+# =====================================================
+
+with st.sidebar:
+
+    st.header("Database")
+
+    db_uri = st.text_input("Chinook DB URI", value="sqlite:///chinook_sqlite.sqlite")
+
+    db = None
+
+    if db_uri:
+        try:
+            db = SQLDatabase.from_uri(db_uri)
+            st.success("Connected")
+
+            if st.button("Show ER Diagram"):
+                render_mermaid(generate_mermaid_er(db._engine))
+
+        except Exception as e:
+            st.error(str(e))
+
+
+st.sidebar.divider()
+st.sidebar.header("Evaluation")
+
+with open(LOG_PATH) as f:
+    logs = json.load(f)
+
+total = len(logs)
+success = sum(l["execution_success"] for l in logs) if logs else 0
+accuracy = (success / total) * 100 if total else 0
+
+st.sidebar.metric("Execution Accuracy", f"{accuracy:.1f}%")
+st.sidebar.write(f"Queries Logged: {total}")
+
+if st.sidebar.button("Replay Evaluation") and db:
+
+    results = []
+
+    for item in logs:
+        ok, _, _ = execute_sql(db, item["generated_sql"])
+        results.append(ok)
+
+    replay_acc = (sum(results) / len(results)) * 100 if results else 0
+
+    st.sidebar.metric("Replay Accuracy", f"{replay_acc:.1f}%")
+
+
+# =====================================================
+# MAIN
+# =====================================================
+
+st.title(" Chinook SQL Generator + Evaluator")
+
+if prompt := st.chat_input("Ask a question about the Chinook database..."):
+
+    if not db:
+        st.error("Connect to the database first.")
+        st.stop()
+
+    st.chat_message("user").write(prompt)
+
+    with st.chat_message("assistant"):
+
+        custom_prompt = PromptTemplate(
+            input_variables=["input", "table_info", "top_k"],
+            template="""You are a SQLite expert. Use the provided Table Info as your ER Diagram to create a join-heavy SQLite query.
+
+You MUST only use the tables and columns provided below.
+
+=====================
+DATABASE SCHEMA:
+{table_info}
+=====================
+
+JOIN RULES:
+1. Many relationships require bridge tables. For example, to get Artist details for a Track, you MUST join Track -> Album -> Artist.
+2. Carefully trace the Foreign Keys (FK) in the Table Info below to connect tables.
+3. If a column isn't in Table A, check Table B's schema for a relationship.
+
+
+RULES:
+- Return ONLY SQL.
+- No explanations.
+- No markdown.
+- Default LIMIT is {top_k} unless specified.
+
+QUESTION:
+{input}
+
+SQLQuery:
+""",
+        )
+
+        chain = create_sql_query_chain(llm, db, prompt=custom_prompt)
+
+        raw_response = chain.invoke({"question": prompt})
+
+        clean_sql = extract_sql(raw_response)
+
+        if not clean_sql:
+            st.error("Model failed to generate SQL.")
+            st.stop()
+
+        if not is_safe(clean_sql):
+            st.error("Unsafe SQL blocked.")
+            st.stop()
+
+        st.code(clean_sql, language="sql")
+
+        success, rows, error = execute_sql(db, clean_sql)
+
+        if success:
+            st.success(f"Query executed | Rows returned: {rows}")
+        else:
+            st.error(f"Execution failed: {error}")
+
+        log_query(prompt, clean_sql, success, rows, error)
