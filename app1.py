@@ -8,6 +8,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from pathlib import Path
+from urllib.parse import urlparse
+import sqlglot
+from sqlglot import exp
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_huggingface import HuggingFacePipeline
 from langchain_community.utilities import SQLDatabase
@@ -26,6 +29,8 @@ def set_seed(seed=42):
     os.environ["PYTHONHASHSEED"] = str(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
 
 
 set_seed(999)
@@ -47,6 +52,8 @@ for path in [LOG_PATH, FAIL_PATH]:
             json.dump([], f)
 
 MODEL_PATH = "cycloneboy/SLM-SQL-0.6B"
+SQL_DIALECT = "sqlite"
+BASE_DIR = Path.cwd().resolve()
 
 st.set_page_config(page_title="Chinook SQL Generator + Evaluator", layout="wide")
 
@@ -153,30 +160,79 @@ def extract_sql(text: str):
 
         return candidate.strip()
 
-    return text.strip()
+    return ""
 
 
 def is_safe(sql: str):
 
-    forbidden = [
-        "DROP",
-        "DELETE",
-        "UPDATE",
-        "ALTER",
-        "INSERT",
-        "TRUNCATE",
-        "CREATE",
-        "REPLACE",
-        "ATTACH",
-        "PRAGMA",
-    ]
+    try:
+        statements = sqlglot.parse(sql, read=SQL_DIALECT)
+    except Exception:
+        return False
 
-    return not any(re.search(rf"\b{word}\b", sql, re.IGNORECASE) for word in forbidden)
+    if len(statements) != 1:
+        return False
+
+    stmt = statements[0]
+    if not stmt.is_select:
+        return False
+
+    forbidden_nodes = (
+        exp.Insert,
+        exp.Update,
+        exp.Delete,
+        exp.Drop,
+        exp.Alter,
+        exp.Create,
+        exp.Replace,
+        exp.Attach,
+        exp.Command,
+        exp.Transaction,
+        exp.Pragma,
+    )
+
+    for node in stmt.walk():
+        if isinstance(node, forbidden_nodes):
+            return False
+
+    return True
+
+
+def normalize_sqlite_uri(uri: str):
+    try:
+        parsed = urlparse(uri)
+    except Exception:
+        return None, "Invalid database URI."
+
+    if parsed.scheme != "sqlite":
+        return None, "Only sqlite:// URIs are allowed."
+
+    if not parsed.path:
+        return None, "SQLite path is empty."
+
+    db_path = Path(parsed.path)
+    if not db_path.is_absolute():
+        db_path = (BASE_DIR / db_path).resolve()
+
+    try:
+        if not db_path.is_relative_to(BASE_DIR):
+            return None, "Database path must be within the project directory."
+    except AttributeError:
+        if BASE_DIR not in db_path.parents and db_path != BASE_DIR:
+            return None, "Database path must be within the project directory."
+
+    if not db_path.exists():
+        return None, f"Database file not found: {db_path}"
+
+    return f"sqlite:///{db_path}", None
 
 
 def execute_sql(db, sql):
     try:
-        with db._engine.connect() as conn:
+        engine = getattr(db, "_engine", None)
+        if engine is None:
+            return False, 0, "Database engine is unavailable."
+        with engine.connect() as conn:
             result = conn.execute(text(sql))
             rows = len(result.fetchall()) if result.returns_rows else result.rowcount
         return True, rows, None
@@ -234,11 +290,15 @@ with st.sidebar:
 
     if db_uri:
         try:
-            db = SQLDatabase.from_uri(db_uri)
-            st.success("Connected")
+            normalized_uri, uri_error = normalize_sqlite_uri(db_uri)
+            if uri_error:
+                st.error(uri_error)
+            else:
+                db = SQLDatabase.from_uri(normalized_uri)
+                st.success("Connected")
 
-            if st.button("Show ER Diagram"):
-                render_mermaid(generate_mermaid_er(db._engine))
+                if st.button("Show ER Diagram"):
+                    render_mermaid(generate_mermaid_er(db._engine))
 
         except Exception as e:
             st.error(str(e))
@@ -262,7 +322,10 @@ if st.sidebar.button("Replay Evaluation") and db:
     results = []
 
     for item in logs:
-        ok, _, _ = execute_sql(db, item["generated_sql"])
+        sql = item.get("generated_sql", "")
+        ok = is_safe(sql)
+        if ok:
+            ok, _, _ = execute_sql(db, sql)
         results.append(ok)
 
     replay_acc = (sum(results) / len(results)) * 100 if results else 0
